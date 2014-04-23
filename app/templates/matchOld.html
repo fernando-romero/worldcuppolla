@@ -1,0 +1,60 @@
+<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+  <div class="thumbnail">
+    <h2>#<%= match.number %>: <%= match.loc.team %> vs <%= match.vis.team %></h2>
+    <div class="caption">
+      <h3><%= match.stage %></h3>
+      <h3>Result: <%= match.loc.goals %> - <%= match.vis.goals %> </h3>
+      <h3>Factor: <%= match.factor %></h3>
+    </div>
+    <% if (prediction && !isMe) { %>
+    <div class="caption">
+      <h2>Prediction:</h3>
+      <h3>Teams: <%= prediction.loc.team %> vs <%= prediction.vis.team %> </h3>
+      <h3>Result: <%= prediction.loc.goals %> vs <%= prediction.vis.goals %> </h3>
+      <h3>Points earned: <%= prediction.pointsEarned %></h3>
+    </div>
+    <% } else if (prediction) { %>
+    <div class="caption">
+      <h2>Prediction:</h3>
+      <form role="form">
+        <% if (match.number > 48) { %>
+        <div class="form-group">
+          <label for="locTeam">Local team</label>
+          <select class="form-control" id="locTeam">
+            <% _.each(teams, function(team){ %>
+            <option <%= team === prediction.loc.team ? 'selected' : '' %> >team</option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="visTeam">Visitor team</label>
+          <select class="form-control" id="visTeam">
+            <% _.each(teams, function(team){ %>
+            <option <%= team === prediction.vis.team ? 'selected' : '' %> >team</option>
+            <% }) %>
+          </select>
+        </div>
+        <% } %>
+        <div class="form-group">
+          <label for="locGoals">Local team's goals</label>
+          <select class="form-control" id="locGoals">
+            <% _.each(_.range(20), function(goals){ %>
+            <option <%= goals === prediction.loc.goals ? 'selected' : '' %> >goals</option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="visGoals">Visitor team's goals</label>
+          <select class="form-control" id="visGoals">
+            <% _.each(_.range(20), function(goals){ %>
+            <option <%= goals === prediction.vis.goals ? 'selected' : '' %> >goals</option>
+            <% }) %>
+          </select>
+        </div>
+        <h3>Points earned: <%= prediction.pointsEarned %></h3>
+        <button type="submit" class="btn btn-default">Save</button>
+      </form>
+    </div>
+    <% } %>
+  </div>
+</div>

@@ -1,47 +1,42 @@
 App.Routers.Main = Backbone.Router.extend({
+
   routes: {
-    '': 'matches',
-    'matches': 'matches',
-    'players': 'players'
+    '': 'players',
+    'players': 'players',
+    'players/:username': 'player'
   },
 
   initialize: function(){
+    this.firebaseUrl = 'https://worldcuppolla.firebaseio.com';
     this.headerView = new App.Views.Header({ el: 'div#header' });
-    this.firebaseViews = [];
-
-    this.matchesView = new App.Views.Firebase({
-      el: 'div#content',
-      template: JST['app/templates/match.html'],
-      isCollection: true,
-      url: 'https://worldcuppolla.firebaseio.com/matches'
-    });
-    this.firebaseViews.push(this.matchesView);
-
-    this.playersView = new App.Views.Firebase({
-      el: 'div#content',
-      template: JST['app/templates/player.html'],
-      isCollection: true,
-      url: 'https://worldcuppolla.firebaseio.com/players'
-    });
-    this.firebaseViews.push(this.playersView);
   },
 
-  matches: function(){
-    _.each(this.firebaseViews, function(firebaseView){
-      firebaseView.autoRender = false;
+  _loadFirebaseView: function(template, path){
+    if (this.selectedView) this.selectedView.remove();
+    $("div#header").after("<div id='content'></div>");
+    this.selectedView = new App.Views.Firebase({
+      el: 'div#content',
+      template: JST[template],
+      reference: App.FirebaseRef.child(path)
     });
-    this.matchesView.autoRender = true;
-    this.matchesView.render();
   },
 
   players: function(){
-    _.each(this.firebaseViews, function(firebaseView){
-      firebaseView.autoRender = false;
-    });
-    this.playersView.autoRender = true;
-    this.playersView.render();
+    this._loadFirebaseView('app/templates/players.html', 'players');
+  },
+
+  player: function(username){
+    this._loadFirebaseView('app/templates/player.html', 'players/' + username);
   }
+
 });
 
-new App.Routers.Main();
-Backbone.history.start();
+App.FirebaseRef.child('forecasts').on('value', function(snapshot){
+  App.forecastsSnapshot = snapshot;
+  new App.Routers.Main();
+  Backbone.history.start();
+});
+
+App.FirebaseRef.child('teams').on('teams', function(snapshot){
+  App.teamsSnapshot = snapshot;
+});

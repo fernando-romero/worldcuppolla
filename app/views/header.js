@@ -16,12 +16,14 @@ App.Views.Header = Backbone.View.extend({
           var me = dataSnapshot.val();
           if (me){
             App.me = dataSnapshot.val();
+            App.me.username = dataSnapshot.name();
             self.render();
           } else {
             self.meRef.setWithPriority({
               name: user.name,
               profilePicture: 'https://graph.facebook.com/' + user.username + '/picture?width=200&height=200',
-              points: 0
+              points: 0,
+              forecasts: App.forecastsSnapshot.val()
             }, 0);
           }
         });
